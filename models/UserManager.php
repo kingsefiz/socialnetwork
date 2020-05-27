@@ -14,3 +14,16 @@ function GetAllUsers()
   $response = $PDO->query("SELECT * FROM user ORDER BY nickname ASC");
   return $response->fetchAll();
 }
+
+function Login($username, $password)
+{
+  global $PDO;
+  $res = $PDO->query("SELECT * FROM user WHERE nickname ='$username' AND password = '$password'");
+  $users = $res->fetchAll();
+  if (count($users) == 1) {
+    $id = $users[0]['id'];
+    return $id;
+  } else {
+    return -1;
+  }
+}

@@ -5,19 +5,32 @@ $action = $_GET["action"] ?? "display";
 switch ($action) {
 
   case 'register':
-    // code...
+    include "../views/RegisterForm.php";
     break;
 
   case 'logout':
-    // code...
+    session_destroy();
+    header("location: ?action=display");
     break;
 
   case 'login':
-    // code...
+    if ($tryToAuth) { // If the user sent a username and a password you have to check if the user exists in DB
+      $userId = Login($_POST['username'], $_POST['password']); // A call to the Login method with user's credentials
+      if ($userId > 0) { // If user exists in DB
+        $_SESSION['userId'] = $userId;
+        $_SESSION['nickname'] = $_POST['username'];
+        header("location: ?action=display"); // Redirect to DisplayPosts.php
+      } else {
+        echo "Mauvais pseudo ou mot de passe";
+        include "../views/LoginForm.php"; // Redirect to LoginForm.php
+      }
+    } else {
+      include "../views/LoginForm.php";
+    }
     break;
 
   case 'newMsg':
-    // code...
+
     break;
 
   case 'newComment':
@@ -27,22 +40,21 @@ switch ($action) {
   case 'display':
   default:
     include "../models/PostManager.php";
+
     $posts = GetAllPosts();
 
     include "../models/CommentManager.php";
     $comments = array();
 
-    // ===================HARDCODED PART===========================
-    // format idPost => array of comments
-    $comments[1] = array(
-      array("nickname" => "FakeUser1", "created_at" => "1970-01-01 00:00:00", "content" => "Fake comment 01."),
-      array("nickname" => "FakeUser2", "created_at" => "1970-01-02 00:00:00", "content" => "Fake comment 02."),
-      array("nickname" => "FakeUser1", "created_at" => "1970-01-03 00:00:00", "content" => "Fake comment 03.")
-    );
-    $comments[3] = array(
-      array("nickname" => "FakeUser1", "created_at" => "1970-01-01 00:00:00", "content" => "Fake comment 04."),
-    );
-    // =============================================================
+    if (isset($_GET["search"])) {
+      $search = $_GET["search"];
+      $posts = GetAllPostsWithComments($search);
+    }
+
+    foreach ($posts as $onePost) {
+      $idPost = $onePost['id'];
+      $comments[$idPost] = GetAllCommentsFromPostId($idPost);
+    }
 
     include "../views/DisplayPosts.php";
     break;
