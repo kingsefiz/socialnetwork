@@ -18,7 +18,7 @@
   <header class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand">
       <img src="../assets/images/icons/icon.png" width=" 30" height="30" class="d-inline-block align-top" alt="">
-      Tiny Social Network
+      Foxy Social Network
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -64,10 +64,9 @@
       </div>
     </div>
     <div class="row">
-      <div class="col">
-        <?php
-        if (isset($_SESSION['userId'])) {
-        ?>
+      <div class="col"><?php
+                        if (isset($_SESSION['userId'])) {
+                        ?>
           <div class="row newMsg">
             <div class="col">
               <form class="input-group" method="POST" action="?action=newMsg">
@@ -77,63 +76,90 @@
             </div>
           </div>
         <?php
-        }
+                        }
         ?>
         <?php
         if (isset($posts)) {
           foreach ($posts as $onePost) {
         ?>
-            <div class="panel panel-white post panel-shadow">
-              <div class="post-heading">
-                <div class="pull-left image">
-                  <img src="img/avatars/default.png" class="rounded-circle img-thumbnail avatar" alt="<?= $onePost['user_id']; ?>">
-                </div>
-                <div class="pull-left meta">
-                  <div class="title h5">
-                    <a href="#"><b><?= $onePost['nickname']; ?></b></a>
-                  </div>
-                  <h6 class="text-muted time"><?= $onePost['created_at']; ?></h6>
-                </div>
-              </div>
-              <div class="post-description">
-                <p><?= $onePost['content']; ?></p>
-              </div>
-              <div class="post-footer">
-                <div class="input-group">
-                  <input class="form-control" placeholder="Add a comment" type="text">
-                  <span class="input-group-text">
-                    <a href="#"><i class="fa fa-edit"></i></a>
-                  </span>
-                </div>
-                <ul class="comments-list">
-                  <?php
-                  $postId = $onePost['id'];
-                  if (isset($comments[$postId])) {
-                    foreach ($comments[$postId] as $comment) {
-                  ?>
-                      <li class="comment">
-                        <a class="pull-left" href="#">
-                          <img class="avatar" src="img/avatars/default.png">
-                        </a>
-                        <div class="comment-body">
-                          <div class="comment-heading">
-                            <h4 class="user"><?= $comment['nickname']; ?></h4>
-                            <h5 class="time"><?= $comment['created_at']; ?></h5>
-                          </div>
-                          <p><?= $comment['content']; ?></p>
+            <div class="row">
+              <div class="col">
+                <div class="panel panel-white post panel-shadow">
+                  <div class="post-heading">
+                    <div class="pull-left image">
+                      <img src="img/avatars/default.png" class="rounded-circle img-thumbnail avatar" alt="<?= $onePost['user_id']; ?>">
+                    </div>
+                    <?php if (isset($_SESSION['userId']) && $_SESSION['userId'] == $onePost['user_id']) { ?>
+
+                      <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          🖊
+                        </button>
+                        <div class="dropdown-menu">
+                          <a class="dropdown-item" href="?action=updatePost&msg=<?= $onePost['id'] ?> ">Modifier le post</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="?action=deletePost&msg=<?= $onePost['id'] ?> ">Supprimer le post</a>
                         </div>
-                      </li>
-                  <?php
+                      </div>
+                    <?php } ?>
+
+                    <div class="pull-left meta">
+                      <div class="title h5">
+                        <a href="#"><b><?= $onePost['nickname']; ?></b></a>
+                      </div>
+                      <h6 class="text-muted time"><?= $onePost['created_at']; ?></h6>
+                    </div>
+                  </div>
+                  <div class="post-description">
+                    <p><?= $onePost['content']; ?></p>
+                  </div>
+                  <div class="post-footer">
+                    <?php
+                    if (isset($_SESSION['userId'])) {
+                    ?>
+                      <div class="input-group">
+                        <form class="input-group" method="POST" action="?action=newComment">
+                          <input name="postId" type="hidden" value="<?= $onePost['id'] ?>">
+                          <input name="comment" class="form-control" placeholder="Add a comment" type="text">
+                          <span class="input-group-text">
+                            <a href="#" onclick="$(this).closest('form').submit()"><i class="fa fa-edit"></i></a>
+                          </span>
+                        </form>
+                      </div>
+                    <?php
                     }
-                  }
-                  ?>
-                </ul>
-              </div>
-            </div>
-        <?php
+                    ?>
+                    <ul class="comments-list">
+                      <?php
+                      $postId = $onePost['id'];
+                      if (isset($comments[$postId])) {
+                        foreach ($comments[$postId] as $comment) {
+                      ?>
+                          <li class="comment">
+                            <a class="pull-left" href="#">
+                              <img class="avatar" src="img/avatars/default.png">
+                            </a>
+                            <div class="comment-body">
+                              <div class="comment-heading">
+                                <h4 class="user"><?= $comment['nickname']; ?></h4>
+                                <h5 class="time"><?= $comment['created_at']; ?></h5>
+                              </div>
+                              <p><?= $comment['content']; ?></p>
+                            </div>
+                          </li>
+                      <?php
+                        }
+                      }
+                      ?>
+                    </ul>
+                  </div>
+                </div>
+            <?php
           }
         }
-        ?>
+            ?>
+              </div>
+            </div>
       </div>
     </div>
   </div>

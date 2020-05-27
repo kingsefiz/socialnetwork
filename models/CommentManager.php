@@ -10,6 +10,7 @@ function GetOneCommentFromId($id)
       "id" => $id
     )
   );
+  return $response->fetchAll();
 }
 
 function GetAllComments()
@@ -30,6 +31,7 @@ function GetAllCommentsFromUserId($userId)
       "userId" => $userId
     )
   );
+  return $response->fetchAll();
 }
 
 function GetAllCommentsFromPostId($postId)
@@ -39,6 +41,20 @@ function GetAllCommentsFromPostId($postId)
   $response->execute(
     array(
       "postId" => $postId
+    )
+  );
+  return $response->fetchAll();
+}
+
+function CreateNewComment($userId, $postId, $comment)
+{
+  global $PDO;
+  $insert = $PDO->prepare("INSERT INTO comment(user_id, post_id, content) values (:userId, :postId, :comment)");
+  $insert->execute(
+    array(
+      "userId" => $userId,
+      "postId" => $postId,
+      "comment" => $comment
     )
   );
 }

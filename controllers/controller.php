@@ -28,7 +28,6 @@ switch ($action) {
       include "../views/RegisterForm.php";
     }
     break;
-    break;
 
   case 'logout':
     session_destroy();
@@ -60,10 +59,33 @@ switch ($action) {
     }
     header('Location: ?action=display');
     break;
-    break;
 
   case 'newComment':
-    // code...
+    include "../models/CommentManager.php";
+    if (isset($_SESSION['userId']) && isset($_POST['postId']) && isset($_POST['comment'])) {
+      CreateNewComment($_SESSION['userId'], $_POST['postId'], $_POST['comment']);
+    }
+    header('Location: ?action=display');
+    break;
+
+  case 'deletePost':
+    include "../models/PostManager.php";
+    if (isset($_SESSION['userId']) && isset($_GET['msg'])) {
+      if (IsPostOwner($_SESSION['userId'], $_GET['msg'])) {
+        DeletePost($_SESSION['userId'], $_GET['msg']);
+      }
+    }
+    header('Location: ?action=display');
+    break;
+
+  case 'updatePost':
+    include "../models/PostManager.php";
+    if (isset($_SESSION['userId']) && isset($_GET['msg'])) {
+      if (IsPostOwner($_SESSION['userId'], $_GET['msg'])) {
+        UpdatePost($_SESSION['userId'], $_GET['msg']);
+      }
+    }
+    header('Location: ?action=display');
     break;
 
   case 'display':

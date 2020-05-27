@@ -62,3 +62,39 @@ function CreateNewPost($userId, $msg)
     )
   );
 }
+
+function DeletePost($postId)
+{
+  global $PDO;
+  $insert = $PDO->prepare("DELETE FROM post WHERE id = :postId");
+  $insert->execute(
+    array(
+      "postId" => $postId,
+    )
+  );
+}
+
+function UpdatePost($postId)
+{
+  global $PDO;
+  $insert = $PDO->prepare("UPDATE content FROM post WHERE id = :postId");
+  $insert->execute(
+    array(
+      "postId" => $postId,
+    )
+  );
+}
+
+function IsPostOwner($userId, $postId)
+{
+  global $PDO;
+  $response = $PDO->prepare("SELECT * FROM post WHERE user_id = :userId AND id = :postId");
+  $response->execute(
+    array(
+      "userId" => $userId,
+      "postId" => $postId
+    )
+  );
+  $posts = $response->fetchAll();
+  return count($posts) == 1;
+}

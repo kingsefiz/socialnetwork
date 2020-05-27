@@ -23,13 +23,13 @@ function Login($username, $password)
 {
   global $PDO;
   $res = $PDO->prepare("SELECT * FROM user WHERE nickname = :username AND password = :password");
-  $users = $res->execute(
+  $res->execute(
     array(
       "username" => $username,
-      "password" => $password
+      "password" => HashPwd($password)
     )
   );
-  return $users;
+  $users = $res->fetchAll();
   if (count($users) == 1) {
     $id = $users[0]['id'];
     return $id;
@@ -57,8 +57,14 @@ function CreateNewUser($nickname, $password)
   $response->execute(
     array(
       "nickname" => $nickname,
-      "password" => $password
+      "password" => HashPwd($password)
     )
   );
   return $PDO->lastInsertId();
+}
+
+function HashPwd($password)
+{
+  $md5 = md5($password);
+  return $md5;
 }

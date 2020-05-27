@@ -22,10 +22,11 @@ CREATE TABLE `comment` (
   `user_id` int NOT NULL,
   `post_id` int NOT NULL,
   `content` varchar(255) NOT NULL DEFAULT ""
+  
 );
 
 ALTER TABLE `post` ADD FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
 
 ALTER TABLE `comment` ADD FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
 
-ALTER TABLE `comment` ADD FOREIGN KEY (`post_id`) REFERENCES `post` (`id`);
+ALTER TABLE `comment` ADD FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE CASCADE;
