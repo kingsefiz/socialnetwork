@@ -4,8 +4,12 @@ include_once "PDO.php";
 function GetOneCommentFromId($id)
 {
   global $PDO;
-  $response = $PDO->query("SELECT * FROM comment WHERE id = $id");
-  return $response->fetch();
+  $response = $PDO->prepare("SELECT * FROM comment WHERE id = :id");
+  return $response->execute(
+    array(
+      "id" => $id
+    )
+  );
 }
 
 function GetAllComments()
@@ -18,21 +22,23 @@ function GetAllComments()
 function GetAllCommentsFromUserId($userId)
 {
   global $PDO;
-  $response = $PDO->query(
-    "SELECT comment.*, user.nickname "
-      . "FROM comment LEFT JOIN user on (comment.user_id = user.id) "
-      . "WHERE comment.user_id = $userId "
-      . "ORDER BY comment.created_at ASC"
+  $response = $PDO->prepare(
+    "SELECT comment.*, user.nickname FROM comment LEFT JOIN user on (comment.user_id = user.id) WHERE comment.user_id = :userId ORDER BY comment.created_at ASC"
   );
-  return $response->fetchAll();
+  $response->execute(
+    array(
+      "userId" => $userId
+    )
+  );
 }
 
 function GetAllCommentsFromPostId($postId)
 {
   global $PDO;
-  $response = $PDO->query("SELECT user.nickname, comment.created_at, comment.content 
-  FROM `user` 
-  LEFT JOIN `comment` ON comment.user_id = user.id 
-  WHERE comment.post_id =" . $postId);
-  return $response->fetchAll();
+  $response = $PDO->prepare("SELECT user.nickname, comment.created_at, comment.content FROM user LEFT JOIN comment ON comment.user_id = user.id WHERE comment.post_id = :postId");
+  $response->execute(
+    array(
+      "postId" => $postId
+    )
+  );
 }

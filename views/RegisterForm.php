@@ -64,7 +64,11 @@
               <img src="../assets/images/icons/icon.png">
             </div>
           </span>
-
+          <?php
+          if (isset($errorMsg)) {
+            echo "<div class='alert alert-warning' role='alert'>$errorMsg</div>";
+          }
+          ?>
           <div class="wrap-input100 validate-input" aria-autocomplete="none">
             <input class="input100" type="text" name="username">
             <span class="focus-input100" data-placeholder="Username"></span>
@@ -82,7 +86,7 @@
             <span class="btn-show-pass">
               <i class="zmdi zmdi-eye"></i>
             </span>
-            <input class="input100" type="password" name="password">
+            <input class="input100" type="password" name="passwordRetype">
             <span class="focus-input100" data-placeholder="Confirm Password"></span>
           </div>
 
